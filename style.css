@@ -1,0 +1,92 @@
+/* General Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #fff;
+  color: #333;
+  line-height: 1.6;
+}
+
+header {
+  background-color: maroon;
+  color: white;
+  padding: 1rem;
+  text-align: center;
+}
+
+nav ul {
+  display: flex;
+  justify-content: center;
+  list-style: none;
+  margin-top: 0.5rem;
+}
+
+nav a {
+  color: white;
+  margin: 0 15px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+nav a:hover {
+  text-decoration: underline;
+}
+
+main {
+  padding: 2rem;
+}
+
+section {
+  margin-bottom: 3rem;
+}
+
+h2 {
+  margin-bottom: 1rem;
+  color: maroon;
+}
+
+.card-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.card {
+  padding: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  background-color: #f9f9f9;
+  transition: transform 0.2s ease;
+}
+
+.card:hover {
+  transform: scale(1.03);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+.card a {
+    display: inline-block;
+    margin-top: 0.5rem;
+    color: maroon;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.card a:hover {
+    text-decoration: underline;
+}
+.term-block {
+    margin-bottom: 2rem;
+}
+
+.term-heading {
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
+    color: #550000;
+    border-left: 4px solid maroon;
+    padding-left: 0.5rem;
+}

@@ -1,0 +1,117 @@
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #800000;
+    /* Maroon color */
+    color: white;
+    padding: 1rem 0;
+    text-align: center;
+}
+
+header h1 {
+    margin: 0;
+}
+
+nav {
+    margin-top: 10px;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 0.5rem 1rem;
+    background-color: #444;
+    border-radius: 4px;
+}
+
+nav a:hover {
+    background-color: #666;
+}
+
+/* Form Styling */
+main {
+    max-width: 600px;
+    margin: 2rem auto;
+    background-color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+form label {
+    font-weight: bold;
+    margin-top: 1rem;
+}
+
+form select,
+form input {
+    padding: 0.8rem;
+    font-size: 1rem;
+    margin-top: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+form button {
+    background-color: #800000;
+    /* Maroon color */
+    color: white;
+    border: none;
+    padding: 1rem;
+    font-size: 1.1rem;
+    margin-top: 1.5rem;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+form button:hover {
+    background-color: #a13c3c;
+    /* Lighter Maroon */
+}
+
+form input[type="url"] {
+    width: 100%;
+}
+
+form input[type="text"] {
+    width: 100%;
+}
+
+/* Alert or Instructions */
+p {
+    text-align: center;
+    font-size: 1.1rem;
+    margin-top: 2rem;
+    color: #555;
+}
+
+@media screen and (max-width: 600px) {
+    main {
+        padding: 1rem;
+        width: 90%;
+    }
+
+    form label,
+    form select,
+    form input {
+        font-size: 1rem;
+    }
+
+    form button {
+        font-size: 1rem;
+        padding: 0.8rem;
+    }
+}

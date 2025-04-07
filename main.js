@@ -42,7 +42,7 @@ function loadNotes() {
   }
 }
 
-// ==== TESTS ====
+// ==== TESTS grouped by term ====
 const testsByTerm = {
   "Term 1": [
     { title: "Term 1 Test", fileUrl: "https://example.com/test-term1.pdf" }
@@ -84,7 +84,7 @@ function loadTests() {
   }
 }
 
-// ==== EXAMS ====
+// ==== EXAMS grouped by term ====
 const examsByTerm = {
   "Term 1": [
     { title: "Term 1 Assessment", fileUrl: "https://example.com/exam-term1.pdf" }
@@ -126,7 +126,7 @@ function loadExams() {
   }
 }
 
-// ==== MEMOS ====
+// ==== MEMOS grouped by term ====
 const memosByTerm = {
   "Term 1": [
     { title: "Term 1 Memo", fileUrl: "https://example.com/memo-term1.pdf" }
@@ -168,8 +168,7 @@ function loadMemos() {
   }
 }
 
-// ==== QUIZZES ====
-
+// ==== QUIZZES grouped by term ====
 const quizzesByTerm = {
   "Term 1": [
     { title: "Term 1 Quiz", fileUrl: "https://example.com/quiz-term1.pdf" }

@@ -7,6 +7,7 @@
     <title>Teacher Upload Panel</title>
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="admin.css" />
+    <script src="https://apis.google.com/js/api.js"></script>
 </head>
 
 <body>
@@ -18,6 +19,19 @@
     </header>
 
     <main>
+        <!-- First Section: Upload File to Google Drive -->
+        <h2>Upload to Google Drive:</h2>
+        <form id="file-upload-form">
+            <input type="file" id="file-upload" />
+            <button type="button" onclick="handleFileUpload()">Upload to Google Drive</button>
+        </form>
+
+        <div id="drive-file-list">
+            <!-- List of uploaded Google Drive files will appear here -->
+        </div>
+
+        <!-- Second Section: Upload Information for Learners -->
+        <h2>Upload Information for Learners:</h2>
         <form id="upload-form">
             <label for="uploadType">Choose Category:</label>
             <select id="uploadType" required>
@@ -40,47 +54,111 @@
             <label for="fileTitle">Title:</label>
             <input type="text" id="fileTitle" placeholder="e.g. Term 2 Quiz" required />
 
-            <label for="fileUrl">File URL (Netlify/Google Drive/etc.):</label>
+            <label for="fileUrl">File URL (Google Drive link):</label>
             <input type="url" id="fileUrl" placeholder="https://..." required />
 
             <button type="submit">Upload File</button>
         </form>
-
-        <p style="margin-top: 1rem;">🚧 This just logs the data for now — backend/database coming soon!</p>
     </main>
-    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-storage.js"></script>
 
     <script>
-        document.getElementById("upload-form").addEventListener("submit", function (e) {
-            e.preventDefault();
+        // Initialize Google API client
+        function loadGoogleAPI() {
+            gapi.load("client:auth2", initClient);
+        }
 
-            const type = document.getElementById("uploadType").value;
-            const term = document.getElementById("uploadTerm").value;
-            const title = document.getElementById("fileTitle").value;
-            const fileUrl = document.getElementById("fileUrl").value;
+        // Set up OAuth client for Google Drive
+        function initClient() {
+            gapi.client.init({
+                apiKey: "AIzaSyBoMfWgNiODu6BOIPsahlLCoesqF-VQuN8", // Replace with your actual Google API key
+                clientId: "YOUR_GOOGLE_CLIENT_ID", // Replace with your actual Client ID from Google Console
+                scope: "https://www.googleapis.com/auth/drive.file", // Scope for Google Drive access
+                discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"]
+            }).then(function () {
+                console.log("Google API client initialized.");
+                signIn();
+            });
+        }
 
-            console.log("Upload Info:", { type, term, title, fileUrl });
+        // Sign-in function for Google OAuth
+        function signIn() {
+            gapi.auth2.getAuthInstance().signIn().then(function (user) {
+                console.log("User signed in:", user.getBasicProfile().getName());
+                listDriveFiles(); // After sign-in, load files from Google Drive
+            }).catch(function (error) {
+                console.error("Error signing in:", error);
+            });
+        }
 
-            alert("✅ File info captured! You can connect this to Firebase, Supabase, or a backend later.");
-        });
-
-        // Your Firebase configuration from Firebase Console
-            const firebaseConfig = {
-                apiKey: "your-api-key",
-                authDomain: "your-project-id.firebaseapp.com",
-                projectId: "your-project-id",
-                storageBucket: "your-project-id.appspot.com",
-                messagingSenderId: "your-sender-id",
-                appId: "your-app-id",
-                measurementId: "your-measurement-id"
+        // Function to upload a file to Google Drive
+        function uploadFileToGoogleDrive(fileData, fileName) {
+            const fileMetadata = {
+                name: fileName,  // Name of the file in Google Drive
+                mimeType: "application/pdf"  // Update if uploading different file types
             };
 
-            // Initialize Firebase
-            const app = firebase.initializeApp(firebaseConfig);
-            const storage = firebase.storage(); // Access Firebase Storage
+            const media = {
+                mimeType: "application/pdf",  // Update MIME type if uploading other file types
+                body: fileData  // File content
+            };
+
+            gapi.client.drive.files.create({
+                resource: fileMetadata,
+                media: media,
+                fields: "id, webViewLink"
+            }).then(function (response) {
+                console.log("File uploaded to Google Drive:", response.result.id);
+                alert("✅ File uploaded to Google Drive successfully!");
+                listDriveFiles(); // Refresh the file list after upload
+            }).catch(function (error) {
+                console.error("Error uploading to Google Drive:", error);
+            });
+        }
+
+        // Handle file upload from the form
+        function handleFileUpload() {
+            const fileInput = document.getElementById("file-upload");
+            const file = fileInput.files[0];  // Get file from input
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function () {
+                    const fileData = reader.result;  // Get file data from FileReader
+                    uploadFileToGoogleDrive(fileData, file.name);  // Call function to upload to Google Drive
+                };
+                reader.readAsArrayBuffer(file);  // Read file as binary data
+            } else {
+                alert("❌ Please choose a file to upload.");
+            }
+        }
+
+        // List files in Google Drive after successful sign-in
+        function listDriveFiles() {
+            gapi.client.drive.files.list({
+                "pageSize": 10,
+                "fields": "nextPageToken, files(id, name, webViewLink)"
+            }).then(function (response) {
+                const files = response.result.files;
+                const fileList = document.getElementById("drive-file-list");
+
+                // Clear previous list before adding new files
+                fileList.innerHTML = "";
+
+                if (files.length > 0) {
+                    files.forEach(function (file) {
+                        const listItem = document.createElement("div");
+                        listItem.innerHTML = `<p>${file.name} - <a href="${file.webViewLink}" target="_blank">View</a></p>`;
+                        fileList.appendChild(listItem);
+                    });
+                } else {
+                    console.log("No files found.");
+                }
+            });
+        }
+
+        // Initialize Google API when the page loads
+        loadGoogleAPI();
     </script>
-    <script src="admin.js"></script>
 </body>
 
 </html>

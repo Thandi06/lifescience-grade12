@@ -70,14 +70,26 @@
         // Set up OAuth client for Google Drive
         function initClient() {
             gapi.client.init({
-                apiKey: "AIzaSyBoMfWgNiODu6BOIPsahlLCoesqF-VQuN8", // Replace with your actual Google API key
+                apiKey: "YOUR_GOOGLE_API_KEY",  // Replace with your actual Google API key
                 clientId: "YOUR_GOOGLE_CLIENT_ID", // Replace with your actual Client ID from Google Console
                 scope: "https://www.googleapis.com/auth/drive.file", // Scope for Google Drive access
                 discoveryDocs: ["https://www.googleapis.com/discovery/v1/apis/drive/v3/rest"]
             }).then(function () {
                 console.log("Google API client initialized.");
-                signIn();
+                checkAuth(); // Check authentication
+            }).catch(function (error) {
+                console.error("Error initializing Google API client:", error);
             });
+        }
+
+        // Check if user is already signed in
+        function checkAuth() {
+            const authInstance = gapi.auth2.getAuthInstance();
+            if (authInstance.isSignedIn.get()) {
+                console.log("User already signed in.");
+            } else {
+                signIn();  // Prompt the user to sign in if not already signed in
+            }
         }
 
         // Sign-in function for Google OAuth
@@ -112,6 +124,7 @@
                 listDriveFiles(); // Refresh the file list after upload
             }).catch(function (error) {
                 console.error("Error uploading to Google Drive:", error);
+                alert("❌ Error uploading the file.");
             });
         }
 
@@ -153,12 +166,15 @@
                 } else {
                     console.log("No files found.");
                 }
+            }).catch(function (error) {
+                console.error("Error listing Google Drive files:", error);
             });
         }
 
         // Initialize Google API when the page loads
-        loadGoogleAPI();
+        window.onload = loadGoogleAPI;
     </script>
+
 </body>
 
 </html>

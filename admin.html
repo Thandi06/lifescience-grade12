@@ -5,52 +5,95 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Teacher Upload Panel</title>
-    <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="admin.css" />
 </head>
 
 <body>
     <header>
-        <h1>Teacher Upload Panel</h1>
-        <nav>
-            <a href="index.html">⬅️ Back to Site</a>
-        </nav>
+        <h1>Teacher Panel - Login</h1>
     </header>
 
     <main>
-        <!-- Upload Information for Learners -->
-        <h2>Upload Information for Learners:</h2>
-        <form id="upload-form">
-            <label for="uploadType">Choose Category:</label>
-            <select id="uploadType" required>
-                <option value="">Select</option>
-                <option value="notes">Notes</option>
-                <option value="quizzes">Quizzes</option>
-                <option value="tests">Tests</option>
-                <option value="exams">Exams</option>
-                <option value="memos">Memos</option>
-            </select>
+        <!-- Back to Main Link -->
+        <div class="back-link">
+            <a href="index.html">⬅️ Back to Main Page</a>
+        </div>
 
-            <label for="uploadTerm">Term:</label>
-            <select id="uploadTerm" required>
-                <option value="Term 1">Term 1</option>
-                <option value="Term 2">Term 2</option>
-                <option value="Term 3">Term 3</option>
-                <option value="Term 4">Term 4</option>
-            </select>
+        <!-- Login Form -->
+        <section id="login-section">
+            <h2>Teacher Login</h2>
+            <form id="login-form">
+                <label for="username">Username:</label>
+                <input type="text" id="username" placeholder="Username" required />
 
-            <label for="fileTitle">Title:</label>
-            <input type="text" id="fileTitle" placeholder="e.g. Term 2 Quiz" required />
+                <label for="password">Password:</label>
+                <input type="password" id="password" placeholder="Password" required />
 
-            <label for="fileUrl">File URL (Google Drive link):</label>
-            <input type="url" id="fileUrl" placeholder="https://..." required />
+                <button type="submit">Login</button>
+            </form>
 
-            <button type="submit">Submit</button>
-        </form>
+            <div class="feedback-message" id="login-feedback-message"></div>
+        </section>
+
+        <!-- Upload Form (hidden initially) -->
+        <section id="upload-section" style="display: none;">
+            <h2>Upload Information for Learners:</h2>
+            <form id="upload-form">
+                <label for="uploadType">Choose Category:</label>
+                <select id="uploadType" required>
+                    <option value="">Select</option>
+                    <option value="notes">Notes</option>
+                    <option value="quizzes">Quizzes</option>
+                    <option value="tests">Tests</option>
+                    <option value="exams">Exams</option>
+                    <option value="memos">Memos</option>
+                </select>
+
+                <label for="uploadTerm">Term:</label>
+                <select id="uploadTerm" required>
+                    <option value="Term 1">Term 1</option>
+                    <option value="Term 2">Term 2</option>
+                    <option value="Term 3">Term 3</option>
+                    <option value="Term 4">Term 4</option>
+                </select>
+
+                <label for="fileTitle">Title:</label>
+                <input type="text" id="fileTitle" placeholder="e.g. Term 2 Quiz" required />
+
+                <label for="fileUrl">File URL (Google Drive link):</label>
+                <input type="url" id="fileUrl" placeholder="https://..." required />
+
+                <button type="submit">Submit</button>
+            </form>
+            <div class="feedback-message" id="feedbackMessage"></div>
+        </section>
     </main>
 
     <script>
-        // Handle learner upload form submission
+        const correctUsername = "teacher"; // Change as needed
+        const correctPassword = "password123"; // Change as needed
+
+        // Handle login form submission
+        document.getElementById("login-form").addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+
+            if (username === correctUsername && password === correctPassword) {
+                // Successful login
+                document.getElementById("login-section").style.display = "none"; // Hide login
+                document.getElementById("upload-section").style.display = "block"; // Show upload section
+                document.getElementById("login-feedback-message").style.display = "none";
+            } else {
+                // Failed login
+                document.getElementById("login-feedback-message").innerText = "Incorrect username or password.";
+                document.getElementById("login-feedback-message").classList.add("error");
+                document.getElementById("login-feedback-message").style.display = "block";
+            }
+        });
+
+        // Handle file upload form submission
         document.getElementById('upload-form').addEventListener('submit', function (e) {
             e.preventDefault();
 
@@ -59,20 +102,78 @@
             const title = document.getElementById('fileTitle').value;
             const url = document.getElementById('fileUrl').value;
 
+            const fileId = url.match(/\/d\/(.+?)\//)?.[1];
+            const directUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
+
             const uploadInfo = {
                 category,
                 term,
                 title,
-                url
+                url: directUrl
             };
 
-            console.log('📁 Upload Info Submitted:', uploadInfo);
-            alert('✅ File info submitted successfully!');
+            const uploads = JSON.parse(localStorage.getItem('uploads') || '{}');
 
-            // TODO: Save this to Firebase, Airtable, or local storage.
-            // You can replace this with your actual backend logic here.
+            // Check if the file already exists in the category and term
+            if (uploads[category] && uploads[category][term]) {
+                const fileExists = uploads[category][term].some(file => file.url === directUrl);
+
+                if (fileExists) {
+                    // If file already exists, show a message and prevent adding the same file
+                    document.getElementById('feedbackMessage').innerHTML = '❌ This file has already been uploaded for this category and term.';
+                    document.getElementById('feedbackMessage').classList.add('error');
+                    document.getElementById('feedbackMessage').style.display = 'block';
+
+                    setTimeout(() => {
+                        document.getElementById('feedbackMessage').style.display = 'none';
+                    }, 3000);
+
+                    return; // Exit the function to avoid adding the duplicate file
+                }
+            }
+
+            // If file does not exist, proceed to add it
+            if (!uploads[category]) uploads[category] = {};
+            if (!uploads[category][term]) uploads[category][term] = [];
+
+            uploads[category][term].push(uploadInfo);
+
+            localStorage.setItem('uploads', JSON.stringify(uploads));
+
+            document.getElementById('feedbackMessage').innerHTML = '✅ File uploaded successfully!';
+            document.getElementById('feedbackMessage').classList.add('success');
+            document.getElementById('feedbackMessage').style.display = 'block';
+
+            setTimeout(() => {
+                document.getElementById('feedbackMessage').style.display = 'none';
+            }, 3000);
         });
     </script>
+
+    <style>
+        .error {
+            color: red;
+        }
+
+        .success {
+            color: green;
+        }
+
+        .back-link {
+            margin-bottom: 20px;
+        }
+
+        .back-link a {
+            font-size: 16px;
+            color: maroon;
+            text-decoration: none;
+        }
+
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+
 </body>
 
 </html>

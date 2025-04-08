@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Uploaded Files</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+        /* General Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #fff;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: maroon;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        nav ul {
+            display: flex;
+            justify-content: center;
+            list-style: none;
+            margin-top: 0.5rem;
+        }
+
+        nav a {
+            color: white;
+            margin: 0 15px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        main {
+            padding: 2rem;
+        }
+
+        section {
+            margin-bottom: 3rem;
+        }
+
+        h2 {
+            margin-bottom: 1rem;
+            color: maroon;
+        }
+
+        /* Card Layout for Terms and Files */
+        .card-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+            max-width: 1200px;
+            /* Constrains the maximum width */
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Standard Card */
+        .card {
+            padding: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+            transition: transform 0.2s ease;
+            text-align: center;
+            max-width: 350px;
+            /* Ensures cards are not too wide */
+            margin: 0 auto;
+        }
+
+        .card:hover {
+            transform: scale(1.03);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .file-title {
+            word-break: break-word;
+            font-size: 0.95rem;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .download-link {
+            font-weight: bold;
+            color: maroon;
+            text-decoration: none;
+        }
+
+        .download-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Delete Button Styling */
+        .delete-btn {
+            padding: 8px 12px;
+            background-color: maroon;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            margin-top: 10px;
+            text-align: center;
+            display: inline-block;
+            transition: background-color 0.2s ease;
+        }
+
+        .delete-btn:hover {
+            background-color: darkred;
+        }
+
+        /* "No files" / "Files uploaded" messages */
+        .file-status-card {
+            display: block;
+            padding: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+            text-align: center;
+            font-weight: bold;
+            color: maroon;
+            transition: transform 0.2s ease;
+            text-decoration: none;
+        }
+
+        .file-status-card:hover {
+            transform: scale(1.03);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            text-decoration: underline;
+        }
+
+        /* Responsive Layout */
+        @media (max-width: 600px) {
+            .card-container {
+                grid-template-columns: 1fr;
+                padding: 0 10px;
+                /* Adds padding on small screens */
+            }
+
+            .card {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Uploaded Files</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">← Back to Main Page</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="uploaded-files">
+            <h2 id="view-title">Loading files...</h2>
+            <div class="card-container" id="file-view-container"></div>
+        </section>
+    </main>
+
+    <script>
+        const correctUsername = "teacher"; // Set your teacher username here
+        const correctPassword = "password123"; // Set your teacher password here
+
+        const params = new URLSearchParams(window.location.search);
+        const category = params.get('category');
+        const term = params.get('term');
+        const uploads = JSON.parse(localStorage.getItem('uploads') || '{}');
+
+        const title = document.getElementById('view-title');
+        const container = document.getElementById('file-view-container');
+
+        if (uploads[category] && uploads[category][term]) {
+            title.textContent = `${term} – ${category.charAt(0).toUpperCase() + category.slice(1)}`;
+
+            uploads[category][term].forEach((file, index) => {
+                const card = document.createElement('div');
+                card.className = 'card';
+
+                card.innerHTML = `
+                    <p class="file-title">${file.title}</p>
+                    <a class="download-link" href="${file.url}" download>Download</a>
+                    <button class="delete-btn" data-file-index="${index}">Delete</button>
+                `;
+                container.appendChild(card);
+            });
+        } else {
+            title.textContent = `${term} – ${category}`;
+            container.innerHTML = `<p class="file-status-card">No files uploaded yet.</p>`;
+        }
+
+        // Add event listener to the "Delete" buttons
+        document.addEventListener('click', function (e) {
+            if (e.target && e.target.classList.contains('delete-btn')) {
+                const fileIndex = e.target.getAttribute('data-file-index');
+                const file = uploads[category][term][fileIndex];
+
+                // Prompt the teacher for the username and password
+                const username = prompt("Enter your username:");
+                const password = prompt("Enter your password:");
+
+                if (username === correctUsername && password === correctPassword) {
+                    // Delete the file from localStorage
+                    uploads[category][term].splice(fileIndex, 1);
+                    localStorage.setItem('uploads', JSON.stringify(uploads));
+
+                    // Remove the card from the page
+                    e.target.closest('.card').remove();
+                    alert("File deleted successfully!");
+                } else {
+                    alert("Incorrect username or password. You cannot delete this file.");
+                }
+            }
+        });
+    </script>
+
+</body>
+
+</html>

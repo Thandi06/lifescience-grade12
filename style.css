@@ -1,92 +1,159 @@
 /* General Reset */
 * {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 body {
-  font-family: Arial, sans-serif;
-  background-color: #fff;
-  color: #333;
-  line-height: 1.6;
+    font-family: Arial, sans-serif;
+    background-color: #fff;
+    color: #333;
+    line-height: 1.6;
 }
 
 header {
-  background-color: maroon;
-  color: white;
-  padding: 1rem;
-  text-align: center;
+    background-color: maroon;
+    color: white;
+    padding: 1rem;
+    text-align: center;
 }
 
 nav ul {
-  display: flex;
-  justify-content: center;
-  list-style: none;
-  margin-top: 0.5rem;
+    display: flex;
+    justify-content: center;
+    list-style: none;
+    margin-top: 0.5rem;
 }
 
 nav a {
-  color: white;
-  margin: 0 15px;
-  text-decoration: none;
-  font-weight: bold;
-}
-
-nav a:hover {
-  text-decoration: underline;
-}
-
-main {
-  padding: 2rem;
-}
-
-section {
-  margin-bottom: 3rem;
-}
-
-h2 {
-  margin-bottom: 1rem;
-  color: maroon;
-}
-
-.card-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
-}
-
-.card {
-  padding: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  background-color: #f9f9f9;
-  transition: transform 0.2s ease;
-}
-
-.card:hover {
-  transform: scale(1.03);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-}
-.card a {
-    display: inline-block;
-    margin-top: 0.5rem;
-    color: maroon;
+    color: white;
+    margin: 0 15px;
     text-decoration: none;
     font-weight: bold;
 }
 
-.card a:hover {
+nav a:hover {
     text-decoration: underline;
 }
-.term-block {
-    margin-bottom: 2rem;
+
+main {
+    padding: 2rem;
 }
 
-.term-heading {
-    font-size: 1.3rem;
+section {
+    margin-bottom: 3rem;
+}
+
+h2 {
     margin-bottom: 1rem;
-    color: #550000;
-    border-left: 4px solid maroon;
-    padding-left: 0.5rem;
+    color: maroon;
+}
+
+/* Card Layout for Terms and Files */
+.card-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+/* Standard Card */
+.card {
+    padding: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    transition: transform 0.2s ease;
+}
+
+.card:hover {
+    transform: scale(1.03);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.file-title {
+    word-break: break-word;
+    font-size: 0.95rem;
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.download-link {
+    font-weight: bold;
+    color: maroon;
+    text-decoration: none;
+}
+
+.download-link:hover {
+    text-decoration: underline;
+}
+
+/* "No files" / "Files uploaded" messages */
+.file-status-card {
+    display: block;
+    padding: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    text-align: center;
+    font-weight: bold;
+    color: maroon;
+    /* Set color for all messages */
+    transition: transform 0.2s ease;
+    text-decoration: none;
+}
+
+.file-status-card:hover {
+    transform: scale(1.03);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    text-decoration: underline;
+}
+
+/* Ensure that 'Files Uploaded' link inside the file-status-card is maroon */
+.file-status-card a {
+    color: maroon;
+    /* This will ensure the link is maroon */
+    text-decoration: none;
+}
+
+.file-status-card a:hover {
+    text-decoration: underline;
+}
+
+/* Button and form styles */
+button,
+input[type="text"],
+input[type="url"],
+select {
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 1rem;
+    width: 100%;
+}
+
+button {
+    background-color: maroon;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: darkred;
+}
+
+.feedback-message {
+    padding: 1rem;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    margin-top: 1rem;
+    border-radius: 5px;
+    color: maroon;
+    text-align: center;
+}
+
+.feedback-message.success {
+    color: green;
 }
